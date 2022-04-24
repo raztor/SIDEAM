@@ -3,7 +3,8 @@ import cv2
 import imutils
 import datetime
 
-gun_cascade = cv2.CascadeClassifier('cascade.xml')
+gun_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'cascade')
+
 camera = cv2.VideoCapture(1)
 
 firstFrame = None
@@ -11,7 +12,7 @@ gun_exist = False
 
 while True:
 
-    ret, frame = camera.read(1)
+    ret, frame = camera.read()
 
     frame = imutils.resize(frame, width=500)
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -46,10 +47,10 @@ while True:
     if key == ord('q'):
         break
 
-        if gun_exist:
-            print("guns detected")
-else:
-    print("guns NOT detected")
+    if gun_exist:
+        print("guns detected")
+    else:
+        print("guns NOT detected")
 
 camera.release()
 cv2.destroyAllWindows()
