@@ -12,11 +12,11 @@
 <!-- PROJECT SHIELDS -->
 <!--
 *** I'm using markdown "reference style" links for readability.
-*** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
-*** See the bottom of this document for the declaration of the reference variables
-*** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
-*** https://www.markdownguide.org/basic-syntax/#reference-style-links
--->
+
+![screenshot](https://user-images.githubusercontent.com/71042858/166175994-440cdf76-b214-4bf4-a853-7012868f80dc.png)
+
+<!-- ABOUT THE PROJECT -->
+## Sobre el proyecto
 
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
@@ -31,7 +31,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/raztorr/sideam">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+    <img src="https://user-images.githubusercontent.com/71042858/166176005-45116dd0-2ade-4dbc-af5f-6ce8afb2fcb5.png" alt="Logo" width="80" height="80">
   </a>
 
   <h3 align="center">SIDEAM</h3>
@@ -79,11 +79,10 @@
 </details>
 
 
-
 <!-- ABOUT THE PROJECT -->
 ## Sobre el proyecto
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+[![Product Name Screen Shot][product-screenshot]](https://github.com/raztorr/sideam)
 
 There are many great README templates available on GitHub; however, I didn't find one that really suited my needs so I created this enhanced one. I want to create a README template so amazing that it'll be the last one you ever need -- I think this is it.
 
@@ -251,4 +250,4 @@ Use this space to list resources you find helpful and would like to give credit 
 [license-url]: https://github.com/raztorr/sideam/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/raztorr
-[product-screenshot]: images/screenshot.png
+[product-screenshot]: https://user-images.githubusercontent.com/71042858/166176326-05f4b664-0eea-4099-b248-317622d4dc8f.png
