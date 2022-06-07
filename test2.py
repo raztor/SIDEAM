@@ -116,5 +116,5 @@ class MugDetection:
 
 
 # Create a new object and execute.
-detector = MugDetection(capture_index=1, model_name='best.pt')
+detector = MugDetection(capture_index=0, model_name='best.pt')
 detector()
