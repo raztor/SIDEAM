@@ -42,7 +42,7 @@
     <a href="https://github.com/Raztorr/SIDEAM/wiki"><strong>Explorar la Wiki »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/Raztorr/SIDEAM/discussions">Habla en el foro</a>
+    <a href="https://github.com/Raztorr/SIDEAM-launch">Revisa el script de inicio rapido</a>
     ·
     <a href="https://github.com/Raztorr/SIDEAM/wiki/Blog">Revisa nuestro Blog</a>
     ·
