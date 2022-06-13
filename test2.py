@@ -3,6 +3,9 @@ import numpy as np
 import cv2
 from time import time
 
+import imagezmq
+from imutils import build_montages
+import imutils
 
 class MugDetection:
     """
@@ -20,6 +23,7 @@ class MugDetection:
         self.classes = self.model.names
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         print("Using Device: ", self.device)
+
 
     def get_video_capture(self):
         """
@@ -87,13 +91,16 @@ class MugDetection:
         and write the output into a new file.
         :return: void
         """
-        cap = self.get_video_capture()
-        assert cap.isOpened()
+        #cap = self.get_video_capture()
+
+        #assert cap.isOpened()
 
         while True:
-
-            ret, frame = cap.read()
-            assert ret
+            rpi_name, image = image_hub.recv_image()
+            image_hub.send_reply(b'OK')
+            #ret, frame = cap.read()
+            #assert ret
+            frame = image
 
             frame = cv2.resize(frame, (416, 416))
 
@@ -112,9 +119,11 @@ class MugDetection:
             if cv2.waitKey(5) & 0xFF == 27:
                 break
 
-        cap.release()
+        #cap.release()
+
+image_hub = imagezmq.ImageHub()
 
 
 # Create a new object and execute.
-detector = MugDetection(capture_index=0, model_name='best.pt')
+detector = MugDetection(capture_index=4, model_name='best.pt')
 detector()
