@@ -54,6 +54,12 @@ class MugDetection:
         frame = [frame]
         results = self.model(frame)
         labels, cord = results.xyxyn[0][:, -1], results.xyxyn[0][:, :-1]
+        #try:
+            #preconf = (results.pandas().xyxy[0].sort_values('confidence'))  # [:, :-1])
+            #preconf = preconf.to_numpy()
+            #confidence = round(preconf.item(4), 2)
+            #return labels, cord, confidence
+        #except:
         return labels, cord
 
     def class_to_label(self, x):
@@ -71,7 +77,11 @@ class MugDetection:
         :param frame: Frame which has been scored.
         :return: Frame with bounding boxes and labels ploted on it.
         """
+        #try:
+            #labels, cord, confidence = results
+        #except:
         labels, cord = results
+
         n = len(labels)
         x_shape, y_shape = frame.shape[1], frame.shape[0]
         for i in range(n):
@@ -82,7 +92,7 @@ class MugDetection:
                 bgr = (0, 255, 0)
                 cv2.rectangle(frame, (x1, y1), (x2, y2), bgr, 2)
                 cv2.putText(frame, self.class_to_label(labels[i]), (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 0.9, bgr, 2)
-
+                #print(confidence)
         return frame
 
     def __call__(self):
@@ -92,15 +102,20 @@ class MugDetection:
         :return: void
         """
         #cap = self.get_video_capture()
-
+        #cap = stream
         #assert cap.isOpened()
+        stream = cv2.VideoCapture('rtsp://usuario:usuario@**.***.***/axis-media/media.amp')
+        print('Fin definicion de Stream')
 
         while True:
-            rpi_name, image = image_hub.recv_image()
-            image_hub.send_reply(b'OK')
+            #rpi_name, image = image_hub.recv_image()
+            #image_hub.send_reply(b'OK')
             #ret, frame = cap.read()
+
             #assert ret
-            frame = image
+            #frame = ipcam
+            #frame = image
+            r, frame = stream.read()
 
             frame = cv2.resize(frame, (416, 416))
 
@@ -122,8 +137,7 @@ class MugDetection:
         #cap.release()
 
 image_hub = imagezmq.ImageHub()
-
-
-# Create a new object and execute.
+stream = cv2.VideoCapture('rtsp://usuario:usuario@10.6.110.27/axis-media/media.amp')
+print('detectado stream')
 detector = MugDetection(capture_index=4, model_name='best.pt')
 detector()
