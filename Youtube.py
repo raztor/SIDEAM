@@ -108,5 +108,5 @@ class ObjectDetection:
 
 
 # Create a new object and execute.
-detection = ObjectDetection("https://www.youtube.com/watch?v=EXUQnLyc3yE", "video2.avi")
+detection = ObjectDetection("https://www.youtube.com/watch?v=YIFuMH-uka0", "video2.avi")
 detection()

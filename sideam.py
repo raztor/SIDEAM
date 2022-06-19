@@ -1,9 +1,10 @@
 import torch
 import numpy as np
 import cv2
-from time import time
-
+import argparse
+import socket
 import imagezmq
+from time import time
 from imutils import build_montages
 import imutils
 
@@ -54,13 +55,14 @@ class MugDetection:
         frame = [frame]
         results = self.model(frame)
         labels, cord = results.xyxyn[0][:, -1], results.xyxyn[0][:, :-1]
-        #try:
-            #preconf = (results.pandas().xyxy[0].sort_values('confidence'))  # [:, :-1])
-            #preconf = preconf.to_numpy()
-            #confidence = round(preconf.item(4), 2)
-            #return labels, cord, confidence
-        #except:
-        return labels, cord
+        '''Confianza pero solo para el primer objeto'''
+        try:
+            preconf = (results.pandas().xyxy[0].sort_values('confidence'))  # [:, :-1])
+            preconf = preconf.to_numpy()
+            confidence = round(preconf.item(4), 2)
+            return labels, cord, confidence
+        except:
+            return labels, cord
 
     def class_to_label(self, x):
         """
@@ -77,22 +79,34 @@ class MugDetection:
         :param frame: Frame which has been scored.
         :return: Frame with bounding boxes and labels ploted on it.
         """
-        #try:
-            #labels, cord, confidence = results
-        #except:
-        labels, cord = results
+        try:
+            labels, cord, confidence = results
+        except:
+            labels, cord = results
 
         n = len(labels)
         x_shape, y_shape = frame.shape[1], frame.shape[0]
         for i in range(n):
             row = cord[i]
-            if row[4] >= 0.3:
-                x1, y1, x2, y2 = int(row[0] * x_shape), int(row[1] * y_shape), int(row[2] * x_shape), int(
-                    row[3] * y_shape)
-                bgr = (0, 255, 0)
-                cv2.rectangle(frame, (x1, y1), (x2, y2), bgr, 2)
-                cv2.putText(frame, self.class_to_label(labels[i]), (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 0.9, bgr, 2)
-                #print(confidence)
+            if fuente == 'rpi':
+                if row[4] >= 0.3:
+                    x1, y1, x2, y2 = int(row[0] * x_shape), int(row[1] * y_shape), int(row[2] * x_shape), int(
+                        row[3] * y_shape)
+                    bgr = (0, 255, 0)
+                    cv2.rectangle(frame, (x1, y1), (x2, y2), bgr, 2)
+                    cv2.putText(frame, self.class_to_label(labels[i]), (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 0.9, bgr, 2)
+                    '''Print de la confidencia'''
+                    print(confidence)
+
+            else:
+                if row[4] >= 0.81:
+                    x1, y1, x2, y2 = int(row[0] * x_shape), int(row[1] * y_shape), int(row[2] * x_shape), int(
+                        row[3] * y_shape)
+                    bgr = (0, 255, 0)
+                    cv2.rectangle(frame, (x1, y1), (x2, y2), bgr, 2)
+                    cv2.putText(frame, self.class_to_label(labels[i]), (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 0.9, bgr, 2)
+                    '''Print de la confidencia'''
+                    print(confidence)
         return frame
 
     def __call__(self):
@@ -101,22 +115,22 @@ class MugDetection:
         and write the output into a new file.
         :return: void
         """
-        #cap = self.get_video_capture()
-        #cap = stream
-        #assert cap.isOpened()
-        stream = cv2.VideoCapture('rtsp://usuario:usuario@**.***.***/axis-media/media.amp')
-        print('Fin definicion de Stream')
+        if fuente == 'ipcam':
+            cap = stream
+        elif fuente == 'webcam':
+            cap = self.get_video_capture()
+            assert cap.isOpened()
+        elif fuente == 'rpi':
+            pass
+
+        print('Fin definicion de cap')
 
         while True:
-            #rpi_name, image = image_hub.recv_image()
-            #image_hub.send_reply(b'OK')
-            #ret, frame = cap.read()
-
-            #assert ret
-            #frame = ipcam
-            #frame = image
-            r, frame = stream.read()
-
+            if fuente == 'rpi':
+                hostname, frame = image_hub.recv_image()
+                image_hub.send_reply(b'OK')
+            else:
+                ret, frame = cap.read()
             frame = cv2.resize(frame, (416, 416))
 
             start_time = time()
@@ -129,15 +143,31 @@ class MugDetection:
 
             cv2.putText(frame, f'FPS: {int(fps)}', (20, 70), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 0), 2)
 
-            cv2.imshow('YOLOv5 Detection', frame)
+            cv2.imshow(f'SIDEAM V.1({hostname})', frame)
 
             if cv2.waitKey(5) & 0xFF == 27:
                 break
+        if fuente == 'webcam':
+            cap.release()
 
-        #cap.release()
 
-image_hub = imagezmq.ImageHub()
-stream = cv2.VideoCapture('rtsp://usuario:usuario@10.6.110.27/axis-media/media.amp')
-print('detectado stream')
-detector = MugDetection(capture_index=4, model_name='best.pt')
+webcam_source = 'DUMMY'
+hostname = socket.gethostname()
+ap = argparse.ArgumentParser()
+ap.add_argument("-f", "--fuente", required=True,
+    help="seleccionar la fuente de video (webcam, rpi, yt, ipcam)")
+fuente = vars(ap.parse_args())['fuente']
+
+print(f'Usando {fuente} como fuente de imagen')
+
+if fuente == 'rpi':
+    image_hub = imagezmq.ImageHub()
+elif fuente == 'ipcam':
+    stream = cv2.VideoCapture('rtsp://usuario:usuario@10.6.110.13/mpeg4/media.amp')
+    print('detectado stream')
+elif fuente == 'webcam':
+    webcam_source = 0
+
+
+detector = MugDetection(capture_index=webcam_source, model_name='./modelos/sideam.pt')
 detector()

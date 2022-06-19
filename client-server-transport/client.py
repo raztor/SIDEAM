@@ -7,7 +7,7 @@ import time
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-s", "--server-ip", required=True,
-	help="ip address of the server to which the client will connect")
+	help="Direccion ip del servidor de destino")
 args = vars(ap.parse_args())
 # initialize the ImageSender object with the socket address of the
 # server
@@ -15,16 +15,23 @@ sender = imagezmq.ImageSender(connect_to="tcp://{}:5555".format(args["server_ip"
 
 # get the host name, initialize the video stream, and allow the
 # camera sensor to warmup
-rpiName = socket.gethostname()
+hostname = socket.gethostname()
 
-'''Si es un RPI'''
-vs = VideoStream(usePiCamera=True).start()
+try:
+  import RPi.GPIO as gpio
+  rpi = True
+  print('Codigo ejecutandose en modo RPI')
+except (ImportError, RuntimeError):
+  rpi = False
+  print('Codigo no ejecutandose en modo RPI')
 
-'''Si es un computador'''
-#vs = VideoStream(src=1).start()
+if rpi == True:
+	vs = VideoStream(usePiCamera=True).start()
+if rpi == False:
+	vs = VideoStream(src=0).start()
+
 time.sleep(2.0)
 print('inicio camara')
 while True:
-	# read the frame from the camera and send it to the server
 	frame = vs.read()
-	sender.send_image(rpiName, frame)
+	sender.send_image(hostname, frame)
