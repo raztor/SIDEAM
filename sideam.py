@@ -5,20 +5,12 @@ import argparse
 import socket
 import imagezmq
 from time import time
-from imutils import build_montages
-import imutils
+
 
 class MugDetection:
-    """
-    Class implements Yolo5 model to make inferences on a youtube video using Opencv2.
-    """
+
 
     def __init__(self, capture_index, model_name):
-        """
-        Initializes the class with youtube url and output file.
-        :param url: Has to be as youtube URL,on which prediction is made.
-        :param out_file: A valid output file name.
-        """
         self.capture_index = capture_index
         self.model = self.load_model(model_name)
         self.classes = self.model.names
@@ -46,11 +38,7 @@ class MugDetection:
         return model
 
     def score_frame(self, frame):
-        """
-        Takes a single frame as input, and scores the frame using yolo5 model.
-        :param frame: input frame in numpy/list/tuple format.
-        :return: Labels and Coordinates of objects detected by model in the frame.
-        """
+
         self.model.to(self.device)
         frame = [frame]
         results = self.model(frame)
@@ -99,7 +87,7 @@ class MugDetection:
                     print(confidence)
 
             else:
-                if row[4] >= 0.81:
+                if row[4] >= 0.5:
                     x1, y1, x2, y2 = int(row[0] * x_shape), int(row[1] * y_shape), int(row[2] * x_shape), int(
                         row[3] * y_shape)
                     bgr = (0, 255, 0)
@@ -110,11 +98,8 @@ class MugDetection:
         return frame
 
     def __call__(self):
-        """
-        This function is called when class is executed, it runs the loop to read the video frame by frame,
-        and write the output into a new file.
-        :return: void
-        """
+
+        global hostname
         if fuente == 'ipcam':
             cap = stream
         elif fuente == 'webcam':
@@ -124,14 +109,14 @@ class MugDetection:
             pass
 
         print('Fin definicion de cap')
-
         while True:
             if fuente == 'rpi':
                 hostname, frame = image_hub.recv_image()
                 image_hub.send_reply(b'OK')
             else:
                 ret, frame = cap.read()
-            frame = cv2.resize(frame, (416, 416))
+            # 416
+            frame = cv2.resize(frame, (500, 500))
 
             start_time = time()
             results = self.score_frame(frame)
@@ -166,8 +151,7 @@ elif fuente == 'ipcam':
     stream = cv2.VideoCapture('rtsp://usuario:usuario@10.6.110.13/mpeg4/media.amp')
     print('detectado stream')
 elif fuente == 'webcam':
-    webcam_source = 0
-
+    webcam_source = 1
 
 detector = MugDetection(capture_index=webcam_source, model_name='./modelos/sideam.pt')
 detector()

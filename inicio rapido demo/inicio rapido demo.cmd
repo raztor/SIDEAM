@@ -57,7 +57,7 @@ if '%choice%'=='n' goto :selecrequ
 echo instalando Py Torch Cuda...
 echo =========================
 echo.
-pip3 install --no-input torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu113
+py -m pip install --no-input torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu113
 goto :selecrequ
 
 :selecrequ
@@ -72,7 +72,7 @@ if '%choice%'=='n' goto :selecinicio
 
 :requirements.txt
 echo instalando requirements.txt...
-pip3 install --no-input -r requirements.txt
+py -m pip install --no-input -r requirements.txt
 goto :selecinicio
 
 :selecinicio

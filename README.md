@@ -208,11 +208,11 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 
 <!-- CONTACT -->
-## Contact
+## Contacto
 
-Your Name - [@your_twitter](https://twitter.com/your_username) - email@example.com
+Discord --> [#Raztor#9620](https://discordapp.com/users/330094029696139264) - contacto@webizy.cl
 
-Project Link: [https://github.com/your_username/repo_name](https://github.com/your_username/repo_name)
+Project Link: [https://github.com/raztorr/SIDEAM](https://github.com/raztorr/SIDEAM)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
